@@ -1,24 +1,10 @@
 'use strict';
 
-let eventPool = require('../eventPool');
+const eventEmitter = require('../eventPool');
+const { handlePickupAndDelivery } = require('./handler');
 
-const pickupHandler = (payload) => {
-  setTimeout(() => {
-    console.log(`DRIVER: picked up ${payload.orderId}`);
-    eventPool.emit('IN-TRANSIT', payload);
-  }, 1000);
-};
+eventEmitter.on('pickup', handlePickupAndDelivery);
 
 
-const deliveredHandler = (payload) => {
-
-  setTimeout(() => {
-    console.log(`DRIVER: delivered ${payload.orderId}`);
-  }, 1000);
-  eventPool.emit('DELIVERED', payload);
 
 
-};
-
-
-module.exports = { pickupHandler, deliveredHandler };

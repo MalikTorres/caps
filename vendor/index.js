@@ -1,16 +1,11 @@
 'use strict';
 
-let eventPool = require('../eventPool');
+const { orderHandler, deliveredMessage } = require('./handler');
+const eventEmitter = require('../eventPool');
 
+// starts the event cycle, note that the pickup emit is inside the orderHandler
+setInterval(() => {
+  orderHandler();
+}, 5000);
 
-
-
-const orderHandler = (payload) => {
-  setTimeout(()=>{
-    console.log(`Thank you for your order ${payload.orderId}`)
-  },1000);
-}
-
-
-
-module.exports = orderHandler;
+eventEmitter.on('delivered', deliveredMessage);
