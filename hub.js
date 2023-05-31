@@ -1,19 +1,20 @@
 'use strict';
 
-let eventPool = require('./eventPool');
-
-// let event = 'pickup';
-// let time = '2020-03-06T18:27:17.732Z';
+const eventPool = require('./eventPool');
 
 
-require('./vendor');
-require('./driver');
-// handlers
-const orderHandler = require('./vendor');
-const pickupHandler = require('./driver');
-const deliveredHandler = require('./driver');
-//listeners
+// making system aware of vendor and driver
+require('./vendor/index');
+require('./driver/index');
 
-eventPool.on('DELIVERED', orderHandler);
-eventPool.on('PICKUP', pickupHandler);
-eventPool.on('IN-TRANSIT',deliveredHandler);
+
+// listeners: listen to all events and log expected content
+eventPool.on('pickup', (payload) => logger('pickup', payload));
+eventPool.on('in-transit', (payload) => logger('in-transit', payload));
+eventPool.on('delivered', (payload) => logger('delivered', payload));
+
+// logs the event , a timestamp and the payload
+function logger(event,payload) {
+  const timestamp = new Date();
+  console.log('EVENT:', { event, timestamp, payload });
+}
