@@ -1,6 +1,6 @@
 'use strict';
 
-let eventEmitter = require('../eventPool');
+let eventEmitter = require('../../eventPool');
 
 const { orderHandler, thankDriver } = require('./handler');
 

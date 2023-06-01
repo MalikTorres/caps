@@ -1,6 +1,6 @@
 'use strict';
 
-let eventEmitter = require('../eventPool');
+let eventEmitter = require('../../eventPool');
 
 const pickupOccurred = (payload) => {
   console.log('DRIVER: picked up', payload.orderId);

@@ -1,6 +1,6 @@
 'use strict';
 
-let eventEmitter = require('../eventPool');
+let eventEmitter = require('../../eventPool');
 const { pickupOccurred, packageDelivered } = require('./handler');
 
 jest.mock('../eventPool.js', () => {
@@ -32,7 +32,7 @@ describe('Testing driver handlers', () => {
 
 
   test('should emit delivered and log Driver delivery ', () => {
-    let payload = { orderId: 12345};
+    let payload = { orderId: 12345 };
     packageDelivered(payload);
 
     expect(eventEmitter.emit).toHaveBeenCalledWith('delivered', payload);

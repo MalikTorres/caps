@@ -1,12 +1,12 @@
 'use strict';
 
 var Chance = require('chance');
-const eventEmitter = require('../eventPool');
+const eventEmitter = require('../../eventPool');
 
 var chance = new Chance();
 
-const orderHandler = (payload=null) => {
-  if(!payload){
+const orderHandler = (payload = null) => {
+  if (!payload) {
     payload = {
       store: chance.company(),
       orderId: chance.guid(),
