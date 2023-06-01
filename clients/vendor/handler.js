@@ -4,11 +4,14 @@ var Chance = require('chance');
 const eventEmitter = require('../../eventPool');
 
 var chance = new Chance();
+const { io } = require('socket.io-client');
+const socket = io('http://localhost:3000');
+
 
 const orderHandler = (payload = null) => {
   if (!payload) {
     payload = {
-      store: chance.company(),
+      store: '1-206-flowers',
       orderId: chance.guid(),
       customer: chance.name(),
       address: chance.address(),
