@@ -1,6 +1,12 @@
 'use strict';
 
-let eventEmitter = require('../../eventPool');
+// let eventEmitter = require('../../eventPool');
+const { io } = require('socket.io-client');
+const socket = io('http://localhost:3000');
+
+
+// socket.on(pickup)
+
 
 const pickupOccurred = (payload) => {
   console.log('DRIVER: picked up', payload.orderId);

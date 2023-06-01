@@ -30,13 +30,13 @@ server.on('connection', (socket) => {
 
   socket.on('in-transit', (payload) => {
     logger();
-    console.log('in transit: pickup event', payload);
+    console.log('in transit: transit event', payload);
     socket.broadcast.emit('in-transit', payload); // should send to all parties except sender based on demo
   });
 
   socket.on('delivered', (payload) => {
     logger();
-    console.log('in transit: pickup event', payload);
+    console.log('delivered: deliver event', payload);
     socket.broadcast.emit('deliverd', payload); // should send to all parties except sender based on demo
   });
 
