@@ -10,24 +10,37 @@ const server = new Server();
 // listening for all events on port at http://localhost:3001
 server.listen(PORT);
 
+function logger(event,payload) {
+  const timestamp = new Date();
+  console.log('EVENT:', { event, timestamp, payload });
+}
+
+
 // from DEMO: allows the capablitiy for clients to connect to http://localhost:3000
 server.on('connection', (socket) => {
 // proof of life
   console.log('connected to event server', socket.id);
 
   socket.on('pickup', (payload)=>{
+    logger();
     console.log('pickup: pickup event', payload);
 
     socket.broadcast.emit('pickup', payload); // should send to all parties except sender based on demo
   });
 
-  socket.on('')
+  socket.on('in-transit', (payload) => {
+    logger();
+    console.log('in transit: pickup event', payload);
+    socket.broadcast.emit('in-transit', payload); // should send to all parties except sender based on demo
+  });
+
+  socket.on('delivered', (payload) => {
+    logger();
+    console.log('in transit: pickup event', payload);
+    socket.broadcast.emit('deliverd', payload); // should send to all parties except sender based on demo
+  });
 
 });
-
-
-
-
 
 // create a name space
 // listening for all events at http//localhost:3000/caps
