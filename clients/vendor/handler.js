@@ -1,14 +1,10 @@
 'use strict';
 
 var Chance = require('chance');
-const eventEmitter = require('../../eventPool');
-
+// const eventEmitter = require('../../eventPool');
 var chance = new Chance();
-const { io } = require('socket.io-client');
-const socket = io('http://localhost:3000');
 
-
-const orderHandler = (payload = null) => {
+const orderHandler = (socket, payload = null) => {
   if (!payload) {
     payload = {
       store: '1-206-flowers',
@@ -18,19 +14,13 @@ const orderHandler = (payload = null) => {
     };
   }
   console.log('VENDOR: ORDER ready for pickup:', payload);
-  eventEmitter.emit('pickup', payload);
+ socket.emit('pickup', payload);
 };
 
 const thankDriver = (payload) => console.log('VENDOR: Thank you for your order', payload.customer);
 
 
-const deliveredMessage = (payload) => {
-  setTimeout(() => {
-    thankDriver(payload);
-  }, 1000);
-};
-
-module.exports = { orderHandler, deliveredMessage, thankDriver };
+module.exports = { orderHandler, thankDriver };
 
 
 

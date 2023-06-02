@@ -4,65 +4,54 @@ require('dotenv').config();
 const { Server } = require('socket.io');
 const PORT = process.env.PORT || 3001;
 
-// socket server singleton // sometimes called io
+// socket server singleton
 const server = new Server();
 
-// listening for all events on port at http://localhost:3001
-server.listen(PORT);
-
-function logger(event,payload) {
-  const timestamp = new Date();
-  console.log('EVENT:', { event, timestamp, payload });
-}
+// create a namespace
+const caps = server.of('/caps');
 
 
-// from DEMO: allows the capablitiy for clients to connect to http://localhost:3000
-server.on('connection', (socket) => {
-// proof of life
-  console.log('connected to event server', socket.id);
+// create / allow for connections to the caps namespace
+caps.on('connection', (socket) => {
+  // confirmation that a client is connected
+  console.log('connection to the caps namespace', socket.id);
 
-  socket.on('pickup', (payload)=>{
-    logger();
-    console.log('pickup: pickup event', payload);
-
-    socket.broadcast.emit('pickup', payload); // should send to all parties except sender based on demo
+  // any event emitted will be logged (from socket docs)
+  socket.onAny((event, payload) => {
+    let timestamp = new Date();
+    // will log everything as required by lab
+    console.log('EVENT:', { event, timestamp, payload });
   });
 
+  // socket listeners
+  socket.on('pickup', (payload) => {
+    socket.broadcast.emit('pickup', payload);
+  });
+
+  // is this necessary since onAny is logging? may good to have?
   socket.on('in-transit', (payload) => {
-    logger();
-    console.log('in transit: transit event', payload);
-    socket.broadcast.emit('in-transit', payload); // should send to all parties except sender based on demo
+    socket.broadcast.emit('in-transit', payload);
   });
 
   socket.on('delivered', (payload) => {
-    logger();
-    console.log('delivered: deliver event', payload);
-    socket.broadcast.emit('deliverd', payload); // should send to all parties except sender based on demo
+    socket.broadcast.emit('delivered', payload);
   });
-
 });
 
-// create a name space
-// listening for all events at http//localhost:3000/caps
-const caps = server.of('/caps');
-caps.on('connection', (socket) => {
-  console.log('socket connected to caps namespace', socket.id);
+console.log('listening on PORT:', PORT);
+server.listen(PORT);
+// making system aware of vendor and driver
+// require('./vendor/index');
+// require('./driver/index');
 
 
-  // FROM DEMO: How to join a room
-  socket.on('JOIN', (room) => {
-    socket.join(room);
-    console.log(`you've joined the ${room} room`);
-    console.log('---payload is the room name in this example--', room);
-    socket.join(room);
-    console.log(`you've joined the ${room} room`);
-    console.log('these are All the current rooms', socket.adapter.rooms);
-    // how to emit to a room:  maybe useful later
-    // socket.to(room).emit('some-event', some-payload);
+// listeners: listen to all events and log expected content
+// eventPool.on('in-transit', (payload) => logger('in-transit', payload));
+// eventPool.on('delivered', (payload) => logger('delivered', payload));
 
-  });
-
-
-});
-
+// logs the event , a timestamp and the payload
+// function logger(event, payload) {
+//   const timestamp = new Date();
+//   console.log('EVENT:', { event, timestamp, payload });
+// }
 
