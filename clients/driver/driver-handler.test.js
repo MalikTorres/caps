@@ -1,9 +1,9 @@
 'use strict';
 
-let eventEmitter = require('../../eventPool');
+let socket = require('/Users/malik/projects/courses/code-401/caps/socket-client-for-tests-only.js');
 const { pickupOccurred, packageDelivered } = require('./handler');
 
-jest.mock('../eventPool.js', () => {
+jest.mock('../socket-client-for-tests-only.js', () => {
   return {
     on: jest.fn(),
     emit: jest.fn(),
@@ -24,18 +24,18 @@ describe('Testing driver handlers', () => {
 
   test('Should log and emit in-transit after pick up occurs', () => {
     let payload = { orderId: 12345 };
-    pickupOccurred(payload);
+    pickupOccurred(payload,socket);
 
-    expect(eventEmitter.emit).toHaveBeenCalledWith('in-transit', payload);
+    expect(socket.emit).toHaveBeenCalledWith('in-transit', payload);
     expect(consoleSpy).toHaveBeenCalledWith('DRIVER: picked up', payload.orderId);
   });
 
 
   test('should emit delivered and log Driver delivery ', () => {
     let payload = { orderId: 12345 };
-    packageDelivered(payload);
+    packageDelivered(payload,socket);
 
-    expect(eventEmitter.emit).toHaveBeenCalledWith('delivered', payload);
+    expect(socket.emit).toHaveBeenCalledWith('delivered', payload);
     expect(consoleSpy).toHaveBeenCalledWith('DRIVER: delivered', payload.orderId);
   });
 
