@@ -3,7 +3,9 @@
 require('dotenv').config();
 const { Server } = require('socket.io');
 const PORT = process.env.PORT || 3001;
-
+const Queue = require('./lib/queue');
+//TODO: Create a Message Queue that can store payloads for specific Client
+let messageQueue = new Queue();
 // socket server singleton
 const server = new Server();
 
@@ -22,7 +24,6 @@ caps.on('connection', (socket) => {
     // will log everything as required by lab
     console.log('EVENT:', { event, timestamp, payload });
   });
-
   // socket listeners
   socket.on('pickup', (payload) => {
     socket.broadcast.emit('pickup', payload);
@@ -35,6 +36,28 @@ caps.on('connection', (socket) => {
 
   socket.on('delivered', (payload) => {
     socket.broadcast.emit('delivered', payload);
+  });
+  socket.on('received', (payload) => {
+    // Here we're retrieving the current queue from messagequeue using the read() method, which is taking payload.queueId as an arguement. This return is then storeed in currentQueue
+    let currentQueue = messageQueue.read(payload.queueId);
+    if (!currentQueue) {
+      throw new Error('we have messages but no queue');
+    }
+    // this line removes a message from the currentQueue using the remove method, taking in payload.messageid as an arguement to identify the specific message
+    let order = currentQueue.remove(payload.orderId);
+    socket.broadcast.emit('received', order);
+  });
+
+  socket.on('getAll', (payload) => {
+    console.log('trying to get messages');
+    let currentQueue = messageQueue.read(payload.queueId);
+    if (currentQueue && currentQueue.data) {
+      // getting list of all the messages
+      Object.keys(currentQueue.data).forEach(orderId => {
+        // sending messages that were missed
+        socket.emit('pickup', currentQueue.read(orderId));
+      });
+    }
   });
 });
 
